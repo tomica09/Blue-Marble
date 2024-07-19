@@ -11,12 +11,12 @@ export default {
   data() {
     return {
       cities: [
-        { id: 1, name: "Seoul" },
-        { id: 2, name: "New York" },
-        // 다른 도시들...
-      ],
+        { id: 1, name: '서울' },
+        { id: 2, name: '뉴욕' },
+        { id: 3, name: '파리' }
+      ]
     };
-  },
+  }
 };
 </script>
 
@@ -24,10 +24,16 @@ export default {
 .game-board {
   display: flex;
   flex-wrap: wrap;
+  width: 800px;
 }
+
 .city {
   width: 100px;
   height: 100px;
   border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
 }
 </style>
