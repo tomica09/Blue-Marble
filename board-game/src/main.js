@@ -1,27 +1,12 @@
-/**import Vue from 'vue';
-import App from './App.vue';
-import store from './store';
-import io from 'socket.io-client';
-
-Vue.config.productionTip = false;
-
-const socket = io('http://localhost:4000');
-
-socket.on('diceRolled', ({ playerId, diceValue }) => {
-  store.commit('SET_DICE_VALUE', diceValue);
-  store.commit('MOVE_PLAYER', { playerId, steps: diceValue });
-  // 다른 이벤트 처리...
-});
-
-Vue.prototype.$socket = socket;
-
-new Vue({
-  store,
-  render: h => h(App),
-}).$mount('#app');
-*/
 import { createApp } from 'vue';
 import App from './App.vue';
 import store from './store';
+
+// URL 파라미터를 통해 플레이어 ID 설정
+const urlParams = new URLSearchParams(window.location.search);
+const playerId = parseInt(urlParams.get('player')) || 1;
+store.state.currentPlayer = playerId;
+
+store.dispatch('initWebSocket');
 
 createApp(App).use(store).mount('#app');
