@@ -1,11 +1,12 @@
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
+app.use(cors());
 let state = {
   players: [
     { id: 1, name: '플레이어 1', money: 1500, position: 0 },
@@ -35,6 +36,6 @@ wss.on('connection', (ws) => {
 
 app.use(express.static('public'));
 
-server.listen(8080, () => {
-  console.log('서버가 포트 8080에서 실행 중입니다.');
+server.listen(8081, () => {
+  console.log('서버가 포트 8081에서 실행 중입니다.');
 });

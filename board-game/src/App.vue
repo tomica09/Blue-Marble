@@ -4,9 +4,9 @@
       <h1>부루마불 게임</h1>
     </header>
     <main>
-      <GameBoard/>
-      <DiceRoll/>
-      <PlayerStatus/>
+      <GameBoard />
+      <DiceRoll />
+      <PlayerStatus />
     </main>
   </div>
 </template>

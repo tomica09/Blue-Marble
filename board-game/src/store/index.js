@@ -40,11 +40,23 @@ const store = createStore({
       }
     },
     initWebSocket({ commit }) {
-      const websocket = new WebSocket('ws://localhost:8080');
+      const websocket = new WebSocket('ws://localhost:8081');
       
       websocket.onmessage = (event) => {
         const newState = JSON.parse(event.data);
         commit('SET_STATE', newState);
+      };
+
+      websocket.onopen = () => {
+        console.log('WebSocket 연결이 열렸습니다.');
+      };
+
+      websocket.onerror = (error) => {
+        console.log('WebSocket 오류:', error);
+      };
+
+      websocket.onclose = () => {
+        console.log('WebSocket 연결이 닫혔습니다.');
       };
 
       commit('SET_WEBSOCKET', websocket);
