@@ -1,30 +1,20 @@
 <script>
-	export let name;
-</script>
-
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
-<style>
+	import GameBoard from './components/GameBoard.svelte';
+	import GameController from './components/GameController.svelte';
+  </script>
+  
+  <main>
+	<h1>부루마불 게임</h1>
+	<GameBoard />
+	<GameController />
+  </main>
+  
+  <style>
 	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+	  display: flex;
+	  flex-direction:row;
+	  align-items: center;
+	  gap: 20px;
 	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+  </style>
+  
