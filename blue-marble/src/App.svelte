@@ -1,3 +1,6 @@
+<head>
+	ㅇ
+</head>
 <script>
 	import GameBoard from './components/GameBoard.svelte';
 	import GameController from './components/GameController.svelte';
