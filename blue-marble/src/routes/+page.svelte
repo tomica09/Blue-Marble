@@ -1,15 +1,11 @@
-<head>
-	ㅇ
-</head>
+
 <script>
-	import GameBoard from './components/GameBoard.svelte';
-	import GameController from './components/GameController.svelte';
+	import GameBoard from '$lib/GameBoard.svelte';
   </script>
-  
   <main>
 	<h1>부루마불 게임</h1>
-	<GameBoard />
-	<GameController />
+	<GameBoard rows={11} cols={11}/>
+	<a href="/play"><button id="playbt">PLAY!</button></a>
   </main>
   
   <style>
@@ -19,5 +15,9 @@
 	  align-items: center;
 	  gap: 20px;
 	}
+	button {
+		width: 3cm;
+		height: 1cm;
+	}
   </style>
-  
+
