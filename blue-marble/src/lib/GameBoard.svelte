@@ -4,7 +4,8 @@
   export let rows;
   export let cols;
   import Tile from './Tile.svelte';
-
+rows = 11
+cols = 11
   const tiles = [
     { name: '무인도' , num: 10},
     { name: '아테네' , num: 11},

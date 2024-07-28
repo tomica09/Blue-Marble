@@ -4,10 +4,16 @@ const wss = new WebSocketServer({ port: 8080 });
 let players = {};
 
 wss.on('connection', (ws) => {
+
+  let playerId = null;
+
   ws.on('message', (message) => {
     const data = JSON.parse(message);
     if (data.type === 'register') {
-      players[data.playerId] = ws;
+      playerId = data.playerId;
+      players[playerId] = ws;
+      console.log(`Player ${playerId} connected`);
+      ws.send(JSON.stringify({ type: 'connected', message: `Player ${playerId} connected to the server.` }));
     } else if (data.type === 'move') {
       const { playerId, position, dice1, dice2, double } = data;
       Object.values(players).forEach(client => {
@@ -17,13 +23,11 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    for (const playerId in players) {
-      if (players[playerId] === ws) {
-        delete players[playerId];
-        console.log(`Player ${playerId} disconnected`);
-        break;
-      }
+    if (playerId) {
+      console.log(`Player ${playerId} disconnected`);
+      delete players[playerId];
     }
   });
 });
+
 console.log('WebSocket server is running on ws://localhost:8080');
