@@ -15,9 +15,19 @@ wss.on('connection', (ws) => {
       console.log(`Player ${playerId} connected`);
       ws.send(JSON.stringify({ type: 'connected', message: `Player ${playerId} connected to the server.` }));
     } else if (data.type === 'move') {
-      const { playerId, position, dice1, dice2, double } = data;
+      const { playerId, position, dice1, dice2, double, turn } = data;
       Object.values(players).forEach(client => {
-        client.send(JSON.stringify({ type: 'move', playerId, position, dice1, dice2, double }));
+        client.send(JSON.stringify({ type: 'move', playerId, position, dice1, dice2, double, turn }));
+      });
+    } else if (data.type === 'turn'){
+      const { playerId, position, dice1, dice2, double, turn } = data;
+      Object.values(players).forEach(client => {
+        client.send(JSON.stringify({ type: 'turn', playerId, position, dice1, dice2, double, turn }));
+      });
+    } else if (data.type === 'buy'){
+      const { playerId,position, price } = data;
+      Object.values(players).forEach(client => {
+        client.send(JSON.stringify({ type: 'buy', playerId, position, price}));
       });
     }
   });

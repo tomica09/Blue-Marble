@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+/*import { writable } from 'svelte/store';
 
 const initialState = {
   players: [],
@@ -26,3 +26,4 @@ function createGameStore() {
 }
 
 export const gameStore = createGameStore();
+**/

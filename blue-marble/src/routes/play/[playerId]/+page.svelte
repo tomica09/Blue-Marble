@@ -2,7 +2,8 @@
   import GameBoard from '$lib/GameBoard.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-
+  import GameController from '../../../lib/GameController.svelte';
+  let turn = 0;
   let dice1 = 0;
   let dice2 = 0;
   let double = '';
@@ -10,11 +11,11 @@
   let currentPlayer = null;
   let players = {}; // 플레이어의 위치를 저장합니다.
   let connectionMessage = '';
-
   // URL 파라미터에서 playerId 가져오기
   let playerId;
   $: playerId = $page.data.playerId;
-
+let gb = '';
+let data = '';
   onMount(() => {
     socket = new WebSocket('ws://localhost:8080');
 
@@ -23,7 +24,7 @@
     });
 
     socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
+      data = JSON.parse(event.data);
       if (data.type === 'connected') {
         connectionMessage = data.message;
       } else if (data.type === 'move') {
@@ -31,7 +32,10 @@
         dice1 = data.dice1;
         dice2 = data.dice2;
         double = data.double;
+        turn = data.turn;
         console.log(`Player ${data.playerId} moved to position ${data.position}`);
+      }else if (data.type === 'turn'){
+        turn = data.turn;
       }
     });
 
@@ -49,12 +53,70 @@
     socket.send(JSON.stringify({
       type: 'move',
       playerId,
-      position: (players[playerId] || 0) + dice, // 현재 위치 업데이트 로직 필요
+      position: ((players[playerId] ? players[playerId] :  0) + dice)%40, // 현재 위치 업데이트 로직 필요
       dice1,
       dice2,
-      double
+      double,
+      turn
     }));
   }
+  
+let notYourTurn = '';
+  function whosturn(){
+    notYourTurn = '';
+    console.log(turn)
+    console.log(playerId)
+    
+    if(turn ===0 && playerId === '1'){
+      rollDice()
+      console.log(double)
+      if(double !== '더블!'){
+        turn = (turn+1)%4
+        socket.send(JSON.stringify({
+          type: 'turn',
+          turn
+    }));
+      }
+      
+    }else if(turn ===1 && playerId ==='2'){
+      rollDice()
+      console.log(double)
+      if(double !== '더블!'){
+        turn = (turn+1)%4
+        socket.send(JSON.stringify({
+          type: 'turn',
+          turn
+    }));
+      }
+      
+    }else if(turn === 2 && playerId ==='3'){
+      rollDice()
+      console.log(double)
+      if(double !== '더블!'){
+        turn = (turn+1)%4
+        socket.send(JSON.stringify({
+          type: 'turn',
+          turn
+    }));
+      }
+      
+    }else if(turn === 3 && playerId ==='4'){
+     rollDice()
+      console.log(double)
+      if(double !== '더블!'){
+        turn = (turn+1)%4
+        socket.send(JSON.stringify({
+          type: 'turn',
+          turn
+    }));
+      }
+      
+    }else{
+      notYourTurn = '당신의 차례가 아닙니다'
+      setTimeout(function(){notYourTurn=''}, 700)
+    }
+  }
+    
 </script>
 
 <style>
@@ -63,9 +125,10 @@
     flex-direction: row;
     align-items: center;
     padding: 10px;
+    gap: 30px;
   }
   .dice-container {
-    width: 1cm;
+    width: 2cm;
     margin-top: 1cm;
   }
   .double {
@@ -78,16 +141,25 @@
 </style>
 
 <div class="controller">
-  <button on:click={rollDice}>주사위 굴리기</button>
   <div class="dice-container">
+  <button on:click={whosturn}>주사위 굴리기</button>
+  
+  
+    <p>순서: Player {turn+1}</p>
     <p>{dice1}</p>
     <p>{dice2}</p>
-  </div>
+  
   <div class="double">
     <p>{double}</p>
   </div>
+  <h3>{notYourTurn}</h3>
+</div>
+
   <div class="connection-message">
     <p>{connectionMessage}</p>
+    게임말이 출발지점에 있을 경우<br>표시가 되지 않을 수 있습니다.
   </div>
-  <GameBoard {players} />
+  <GameBoard players={players}/>
+  <GameController playerId={playerId}/>
+
 </div>

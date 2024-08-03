@@ -1,11 +1,10 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-
-  const dispatch = createEventDispatcher();
-
-  function rollDice() {
-    dispatch('roll');
-  }
+  export let playerId;
+  
 </script>
-
-<button on:click={rollDice}>주사위 굴리기</button>
+<style>
+</style>
+{#if playerId !== undefined}
+<h1>Player {playerId} 통계</h1>
+50만원권 : 
+{/if}
