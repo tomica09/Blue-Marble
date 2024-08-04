@@ -23,20 +23,19 @@
 </script>
 
 <div class="aa">
-  {#if tile.whose === 1}
+  {#if tile.whose === "1"}
     <div class="one">
-      <p>{tile.name}</p>
-      <p>{howMuch}</p>
+      <p>{tile.name}<br />{howMuch}</p>
     </div>
-  {:else if tile.whose === 2}
+  {:else if tile.whose === "2"}
     <div class="two">
       <p>{tile.name}<br />{howMuch}</p>
     </div>
-  {:else if tile.whose === 3}
+  {:else if tile.whose === "3"}
     <div class="three">
       <p>{tile.name}<br />{howMuch}</p>
     </div>
-  {:else if tile.whose === 4}
+  {:else if tile.whose === "4"}
     <div class="four">
       <p>{tile.name}<br />{howMuch}</p>
     </div>
@@ -59,6 +58,7 @@
   {/if}
   {hoouse + buuilding + hootel}
 </div>
+
 <!--
     #house{
       display:flex;

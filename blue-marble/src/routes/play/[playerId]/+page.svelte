@@ -41,8 +41,11 @@
         );
       } else if (data.type === "turn") {
         turn = data.turn;
-      } else if ((data.type = "buyGround")) {
-        console.log(`page, Roger ${data.where}`);
+      } else if (data.type === "buyGround") {
+        tiles.find((country) => country.num === data.where).whose =
+          data.playerId;
+      } else if (data.type === "buyStructure") {
+        tiles.name[data.where].hotel = data.hotel;
       }
     });
 

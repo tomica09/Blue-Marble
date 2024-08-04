@@ -54,6 +54,20 @@ wss.on("connection", (ws) => {
         client.send(JSON.stringify({ type: "buyGround", playerId, where }));
       });
       console.log(`server.js, Roger`);
+    } else if (data.type === "buyStructure") {
+      const { playerId, where, hotel, building, house } = data;
+      Object.values(players).forEach((client) => {
+        client.send(
+          JSON.stringify({
+            type: "buyStructure",
+            playerId,
+            where,
+            hotel,
+            building,
+            house,
+          })
+        );
+      });
     }
   });
 
