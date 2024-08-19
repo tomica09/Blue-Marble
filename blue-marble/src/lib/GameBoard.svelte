@@ -10,18 +10,27 @@
   export let playerId;
   import { onMount } from "svelte";
   export let tiles;
+  export let b;
+  export let turn;
   rows = 11;
   cols = 11;
 
+  let tile;
+  let a = 0;
+  setInterval(function () {
+    a = (a + 1) % 2;
+  }, 500);
   // 그리드 데이터 생성
   let grid = Array(rows)
     .fill()
     .map(() => Array(cols).fill(null));
 
   for (let i = 0; i < 121; i++) {
-    let tile = tiles[i];
+    tile = tiles[i];
     grid[Math.floor(i / cols)][i % cols] = tile;
   }
+  b = b;
+  //console.log(tiles);
 </script>
 
 <div class="board">
@@ -60,9 +69,9 @@
                 {/if}
               </div>
             </div>
-            <Tile {tile} />
+            <Tile {tile} {a} />
           {:else}
-            <Tile {tile} />
+            <Tile {tile} {a} />
           {/if}
         {/if}
       </div>
@@ -70,9 +79,9 @@
   {/each}
 </div>
 <div class="gamecontroller">
-  {#if playerId}
-    <GameController {playerId} {players} {tiles} />
-  {/if}
+  <!--{#if playerId}
+    <GameController {playerId} {players} {tiles} {turn} />
+  {/if}-->
 </div>
 
 <style>

@@ -3,9 +3,12 @@
   export let players;
   export let tiles;
   import { onMount } from "svelte";
+  export let turn;
+  export let passmoney;
   let ahotel = 0;
   let abuilding = 0;
   let ahouse = 0;
+  let noHavemoney = "";
   let socket;
   onMount(() => {
     socket = new WebSocket("ws://localhost:8080");
@@ -63,19 +66,12 @@
     ptone: 0,
   };
 
-  let nomoney = "";
-  let money =
-    (playermoney[playerId - 1].fifty * 500 +
-      playermoney[playerId - 1].ten * 100 +
-      playermoney[playerId - 1].five * 50 +
-      playermoney[playerId - 1].two * 20 +
-      playermoney[playerId - 1].one * 10 +
-      playermoney[playerId - 1].ptfive * 5 +
-      playermoney[playerId - 1].ptone) /
-    10;
+  let money = 0;
   function buyGround() {
     if (findwhose(players[playerId]) === "") {
+      //주인이 없으면
       if (send * 10 === findhowmuch(players[playerId])) {
+        //가격이 같으면
         socket.send(
           JSON.stringify({
             type: "buyGround",
@@ -84,60 +80,150 @@
           })
         );
         send = (send * 10 - findhowmuch(players[playerId])) / 10;
-      } else {
-        nomoney = `금액이 맞지 않습니다!`;
 
-        setTimeout(function () {
-          nomoney = "";
-        }, 700);
+        sendmoney.fifty = 0;
+        sendmoney.ten = 0;
+        sendmoney.five = 0;
+        sendmoney.two = 0;
+        sendmoney.one = 0;
+        sendmoney.ptfive = 0;
+        sendmoney.ptone = 0;
+      } else if (send * 10 <= findhowmuch(players[playerId])) {
+        nomoney(
+          `${(findhowmuch(players[playerId]) - send * 10) / 10} 만원 만큼 돈이 부족합니다!`
+        );
+      } else if (send * 10 >= findhowmuch(players[playerId])) {
+        nomoney(
+          `${(-1 * (findhowmuch(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
+        );
       }
     } else {
-      nomoney = "이 땅을 구매할 수 없습니다!";
-
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("이 땅을 구매할 수 없습니다!");
     }
     console.log(`GameController, Roger ${players[playerId]}`);
   }
   function buyhotel() {
-    ahotel = 1;
-    socket.send(
-      JSON.stringify({
-        type: "buyStructure",
-        playerId,
-        where: players[playerId],
-        hotel: ahotel,
-        building: abuilding,
-        house: ahouse,
-      })
-    );
+    if (
+      send * 10 === findhowmuchhotel(players[playerId]) &&
+      findwhose(players[playerId]) === playerId &&
+      turn + 1 === Number(playerId)
+    ) {
+      socket.send(
+        JSON.stringify({
+          type: "buyStructure",
+          playerId,
+          where: players[playerId],
+          hotel: 1,
+          building: 0,
+          house: 0,
+        })
+      );
+      send = (send * 10 - findhowmuchhotel(players[playerId])) / 10;
+
+      sendmoney.fifty = 0;
+      sendmoney.ten = 0;
+      sendmoney.five = 0;
+      sendmoney.two = 0;
+      sendmoney.one = 0;
+      sendmoney.ptfive = 0;
+      sendmoney.ptone = 0;
+    } else if (turn + 1 !== Number(playerId)) {
+      nomoney("당신의 차례가 아닙니다!");
+    } else if (findwhose(players[playerId]) !== playerId) {
+      nomoney("당신의 땅이 아닙니다");
+    } else if (send * 10 < findhowmuchhotel(players[playerId])) {
+      nomoney(
+        `${(findhowmuchhotel(players[playerId]) - send * 10) / 10} 만원 만큼 돈이 부족합니다!`
+      );
+    } else if (send * 10 > findhowmuchhotel(players[playerId])) {
+      nomoney(
+        `${(-1 * (findhowmuchhotel(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
+      );
+    } else {
+      alert("요청 처리 실패");
+    }
   }
   function buybuilding() {
-    abuilding = 1;
-    socket.send(
-      JSON.stringify({
-        type: "buyStructure",
-        playerId,
-        where: players[playerId],
-        hotel: ahotel,
-        building: abuilding,
-        house: ahouse,
-      })
-    );
+    if (
+      send * 10 === findhowmuchbuilding(players[playerId]) &&
+      findwhose(players[playerId]) === playerId &&
+      turn + 1 === Number(playerId)
+    ) {
+      socket.send(
+        JSON.stringify({
+          type: "buyStructure",
+          playerId,
+          where: players[playerId],
+          hotel: 0,
+          building: 1, //"🏢",
+          house: 0,
+        })
+      );
+      send = (send * 10 - findhowmuchbuilding(players[playerId])) / 10;
+
+      sendmoney.fifty = 0;
+      sendmoney.ten = 0;
+      sendmoney.five = 0;
+      sendmoney.two = 0;
+      sendmoney.one = 0;
+      sendmoney.ptfive = 0;
+      sendmoney.ptone = 0;
+    } else if (turn + 1 !== Number(playerId)) {
+      nomoney("당신의 차례가 아닙니다!");
+    } else if (findwhose(players[playerId]) !== playerId) {
+      nomoney("당신의 땅이 아닙니다");
+    } else if (send * 10 < findhowmuchbuilding(players[playerId])) {
+      nomoney(
+        `${(findhowmuchbuilding(players[playerId]) - send * 10) / 10} 만원 만큼 돈이 부족합니다!`
+      );
+    } else if (send * 10 > findhowmuchbuilding(players[playerId])) {
+      nomoney(
+        `${(-1 * (findhowmuchbuilding(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
+      );
+    } else {
+      alert("요청 처리 실패");
+    }
   }
   function buyhouse() {
-    ahouse = 1;
-    socket.send(
-      JSON.stringify({
-        type: "buyStructure",
-        playerId,
-        where: players[playerId],
-        hotel: ahotel,
-        building: abuilding,
-        house: ahouse,
-      })
-    );
+    if (
+      send * 10 === findhowmuchhouse(players[playerId]) &&
+      findwhose(players[playerId]) === playerId &&
+      turn + 1 === Number(playerId)
+    ) {
+      socket.send(
+        JSON.stringify({
+          type: "buyStructure",
+          playerId,
+          where: players[playerId],
+          hotel: 0,
+          building: 0,
+          house: 1, //"🏠",
+        })
+      );
+      send = (send * 10 - findhowmuchhouse(players[playerId])) / 10;
+
+      sendmoney.fifty = 0;
+      sendmoney.ten = 0;
+      sendmoney.five = 0;
+      sendmoney.two = 0;
+      sendmoney.one = 0;
+      sendmoney.ptfive = 0;
+      sendmoney.ptone = 0;
+    } else if (turn + 1 !== Number(playerId)) {
+      nomoney("당신의 차례가 아닙니다!");
+    } else if (findwhose(players[playerId]) !== playerId) {
+      nomoney("당신의 땅이 아닙니다");
+    } else if (send * 10 < findhowmuchhouse(players[playerId])) {
+      nomoney(
+        `${(findhowmuchhouse(players[playerId]) - send * 10) / 10} 만원 만큼 돈이 부족합니다!`
+      );
+    } else if (send * 10 > findhowmuchhouse(players[playerId])) {
+      nomoney(
+        `${(-1 * (findhowmuchhouse(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
+      );
+    } else {
+      alert("요청 처리 실패");
+    }
   }
   function moneymoney1() {
     if (playermoney[playerId - 1].fifty > 0) {
@@ -320,6 +406,25 @@
     const found = tiles.find((country) => country.num === a);
     return found ? found.price : null;
   }
+  function findhowmuchhotel(a) {
+    const found = tiles.find((country) => country.num === a);
+    return found ? found.price3 : null;
+  }
+  function findhowmuchbuilding(a) {
+    const found = tiles.find((country) => country.num === a);
+    return found ? found.price2 : null;
+  }
+  function findhowmuchhouse(a) {
+    const found = tiles.find((country) => country.num === a);
+    return found ? found.price1 : null;
+  }
+  function nomoney(a) {
+    noHavemoney = a;
+
+    setTimeout(function () {
+      noHavemoney = "";
+    }, 700);
+  }
 </script>
 
 {#if playerId !== undefined}
@@ -350,11 +455,20 @@
     선택한 금액 {send} 만원
     <button on:click={resetmoney}>선택 금액 초기화</button>
   </p>
-  <p>총 재산 : {money} 만원</p>
-  {nomoney}
+  <p>
+    총 재산 : {(playermoney[playerId - 1].fifty * 500 +
+      playermoney[playerId - 1].ten * 100 +
+      playermoney[playerId - 1].five * 50 +
+      playermoney[playerId - 1].two * 20 +
+      playermoney[playerId - 1].one * 10 +
+      playermoney[playerId - 1].ptfive * 5 +
+      playermoney[playerId - 1].ptone) /
+      10} 만원
+  </p>
+  {noHavemoney}
   <button on:click={buyGround}>땅 구매</button>
   {#if players[playerId] !== 0}
-    {#if players[playerId] === findwhose(players[playerId])}
+    {#if playerId === findwhose(players[playerId])}
       <button on:click={buyhouse}>별장 구매</button>
       <button on:click={buybuilding}>빌딩 구매</button>
       <button on:click={buyhotel}>호텔 구매</button>

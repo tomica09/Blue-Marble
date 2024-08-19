@@ -1,17 +1,7 @@
 <script>
   export let tile;
-  let hootel = "";
-  let hoouse = "";
-  let buuilding = "";
-  if (tile.hotel !== "") {
-    hootel = "🏨".repeat(tile.hotel);
-  }
-  if (tile.building !== "") {
-    buuilding = "🏢".repeat(tile.building);
-  }
-  if (tile.house !== "") {
-    hoouse = "🏠".repeat(tile.house);
-  }
+  export let a;
+
   let howMuch = tile.price / 10;
   if (isNaN(howMuch)) {
     howMuch = "";
@@ -20,6 +10,7 @@
   } else {
     howMuch = String(howMuch) + " 만원";
   }
+  a = a;
 </script>
 
 <div class="aa">
@@ -56,8 +47,18 @@
       <p>{tile.name}<br />{howMuch}</p>
     </div>
   {/if}
-  {hoouse + buuilding + hootel}
 </div>
+{#if tile}
+  {#if tile.hotel}
+    {"🏨".repeat(tile.hotel)}
+  {/if}
+  {#if tile.building}
+    {"🏢".repeat(tile.building)}
+  {/if}
+  {#if tile.house}
+    {"🏠".repeat(tile.house)}
+  {/if}
+{/if}
 
 <!--
     #house{

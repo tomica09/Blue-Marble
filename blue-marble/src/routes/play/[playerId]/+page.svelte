@@ -42,10 +42,14 @@
       } else if (data.type === "turn") {
         turn = data.turn;
       } else if (data.type === "buyGround") {
-        tiles.find((country) => country.num === data.where).whose =
-          data.playerId;
+        let found = tiles.find((country) => country.num === data.where);
+        found.whose = data.playerId;
       } else if (data.type === "buyStructure") {
-        tiles.name[data.where].hotel = data.hotel;
+        let found = tiles.find((country) => country.num === data.where);
+        found.hotel = found.hotel + data.hotel;
+        found.building = found.building + data.building;
+        found.house = found.house + data.house;
+        console.log(tiles);
       }
     });
 
@@ -134,6 +138,10 @@
       }, 700);
     }
   }
+  let b = 0;
+  setInterval(function () {
+    b = (b + 1) % 2;
+  }, 500);
 </script>
 
 <div class="controller">
@@ -154,10 +162,21 @@
     <p>{connectionMessage}</p>
     게임말이 출발지점에 있을 경우<br />표시가 되지 않을 수 있습니다.
   </div>
-  <GameBoard {players} {playerId} {tiles} />
+  <GameBoard {players} {playerId} {tiles} {b} {turn} />
+  <div class="gamecontroller">
+    {#if playerId}
+      <GameController {playerId} {players} {tiles} {turn} />
+    {/if}
+  </div>
 </div>
 
 <style>
+  .gamecontroller {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+  }
   .controller {
     display: flex;
     flex-direction: row;
