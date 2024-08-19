@@ -17,6 +17,8 @@
   $: playerId = $page.data.playerId;
   let gb = "";
   let data = "";
+  let passmoney = 0;
+  //0: 통행료 지불 안 함 1: 통행료 지불 함
   onMount(() => {
     socket = new WebSocket("ws://localhost:8080");
 
@@ -76,7 +78,12 @@
       })
     );
   }
-
+  /**
+   * rolldice 함수를 호출 받았을 때 지금 서 있는 땅이 통행료를 지불 받았는지 확인
+   * 만약에 받지 않았으면 리턴, 받았으면 진행 (지금 서있는 땅 주인이 있는지 확인 必)
+   * 진행 후 통행료 지불 여부 0으로 변경
+   * 게임컨트롤러파일에서 send값이랑 연동하여 지불 (passmoney1로 변경 후 서버로 전송)
+   */
   let notYourTurn = "";
   function whosturn() {
     notYourTurn = "";
@@ -165,7 +172,7 @@
   <GameBoard {players} {playerId} {tiles} {b} {turn} />
   <div class="gamecontroller">
     {#if playerId}
-      <GameController {playerId} {players} {tiles} {turn} />
+      <GameController {playerId} {players} {tiles} {turn} {passmoney} />
     {/if}
   </div>
 </div>
