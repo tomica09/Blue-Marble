@@ -1,7 +1,58 @@
 <script>
   export let tile;
   export let a;
+  export let ahotel;
+  export let abuilding;
+  export let ahouse;
+  export let tilenum;
+  let structure = [
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+    { hotel: 0, building: 0, house: 0 },
+  ];
 
+  setInterval(function () {
+    structure[tilenum].hotel = ahotel;
+    structure[tilenum].building = abuilding;
+    structure[tilenum].house = ahouse;
+  }, 700);
   let howMuch = tile.price / 10;
   if (isNaN(howMuch)) {
     howMuch = "";
@@ -50,13 +101,13 @@
 </div>
 {#if tile}
   {#if tile.hotel}
-    {"🏨".repeat(tile.hotel)}
+    {"🏨".repeat(structure[tile.num].hotel)}
   {/if}
   {#if tile.building}
-    {"🏢".repeat(tile.building)}
+    {"🏢".repeat(structure[tile.num].building)}
   {/if}
   {#if tile.house}
-    {"🏠".repeat(tile.house)}
+    {"🏠".repeat(structure[tile.num].house)}
   {/if}
 {/if}
 

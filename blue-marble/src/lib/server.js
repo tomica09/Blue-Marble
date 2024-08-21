@@ -68,6 +68,17 @@ wss.on("connection", (ws) => {
           })
         );
       });
+    } else if (data.type === "tax") {
+      const { playerId, passmoney } = data;
+      Object.values(players).forEach((client) => {
+        client.send(
+          JSON.stringify({
+            type: "tax",
+            playerId,
+            passmoney,
+          })
+        );
+      });
     }
   });
 

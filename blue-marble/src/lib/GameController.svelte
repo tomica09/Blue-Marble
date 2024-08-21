@@ -4,10 +4,7 @@
   export let tiles;
   import { onMount } from "svelte";
   export let turn;
-  export let passmoney;
-  let ahotel = 0;
-  let abuilding = 0;
-  let ahouse = 0;
+
   let noHavemoney = "";
   let socket;
   onMount(() => {
@@ -67,6 +64,63 @@
   };
 
   let money = 0;
+  function paytax() {
+    if (
+      findwhose(players[playerId]) === String(playerId) ||
+      findwhose(players[playerId]) === ""
+    ) {
+      nomoney("통행료를 납부할 필요가 없습니다");
+    } else if (
+      findwhose(players[playerId]) === "1" ||
+      findwhose(players[playerId]) === "2" ||
+      findwhose(players[playerId]) === "3" ||
+      findwhose(players[playerId]) === "4"
+    ) {
+      if (typeof findhowmuchtax(players[playerId]) === "string") {
+        nomoney("통행료를 납부할 수 없습니다");
+      } else if (send * 10 === findhowmuchtax(players[playerId])) {
+        //가격이 같으면
+        socket.send(
+          JSON.stringify({
+            type: "tax",
+            playerId,
+            passmoney: 1,
+          })
+        );
+        send = (send * 10 - findhowmuchtax(players[playerId])) / 10;
+        playermoney[Number(findwhose(players[playerId]))].fifty =
+          sendmoney.fifty;
+        playermoney[Number(findwhose(players[playerId]))].ten = sendmoney.ten;
+        playermoney[Number(findwhose(players[playerId]))].five = sendmoney.five;
+        playermoney[Number(findwhose(players[playerId]))].two = sendmoney.two;
+        playermoney[Number(findwhose(players[playerId]))].one = sendmoney.one;
+        playermoney[Number(findwhose(players[playerId]))].ptfive =
+          sendmoney.ptfive;
+        playermoney[Number(findwhose(players[playerId]))].ptone =
+          sendmoney.ptone;
+
+        sendmoney.fifty = 0;
+        sendmoney.ten = 0;
+        sendmoney.five = 0;
+        sendmoney.two = 0;
+        sendmoney.one = 0;
+        sendmoney.ptfive = 0;
+        sendmoney.ptone = 0;
+      } else if (send * 10 < findhowmuchtax(players[playerId])) {
+        nomoney(
+          `${(findhowmuchtax(players[playerId]) - send * 10) / 10} 만원 만큼 돈이 부족합니다!`
+        );
+      } else if (send * 10 > findhowmuchtax(players[playerId])) {
+        nomoney(
+          `${(-1 * (findhowmuchtax(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
+        );
+      } else {
+        alert("요청처리 실패");
+      }
+    } else {
+      alert("요청처리 실패");
+    }
+  }
   function buyGround() {
     if (findwhose(players[playerId]) === "") {
       //주인이 없으면
@@ -119,7 +173,6 @@
         })
       );
       send = (send * 10 - findhowmuchhotel(players[playerId])) / 10;
-
       sendmoney.fifty = 0;
       sendmoney.ten = 0;
       sendmoney.five = 0;
@@ -140,7 +193,7 @@
         `${(-1 * (findhowmuchhotel(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
       );
     } else {
-      alert("요청 처리 실패");
+      nomoney("이 땅은 건물을 지을 수 없음");
     }
   }
   function buybuilding() {
@@ -181,7 +234,7 @@
         `${(-1 * (findhowmuchbuilding(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
       );
     } else {
-      alert("요청 처리 실패");
+      nomoney("이 땅은 건물을 지을 수 없음");
     }
   }
   function buyhouse() {
@@ -222,7 +275,7 @@
         `${(-1 * (findhowmuchhouse(players[playerId]) - send * 10)) / 10} 만원 만큼 돈이 남습니다!`
       );
     } else {
-      alert("요청 처리 실패");
+      nomoney("이 땅은 건물을 지을 수 없음");
     }
   }
   function moneymoney1() {
@@ -239,10 +292,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney2() {
@@ -259,10 +309,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney3() {
@@ -279,10 +326,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney4() {
@@ -299,10 +343,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney5() {
@@ -319,10 +360,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney6() {
@@ -339,10 +377,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
   function moneymoney7() {
@@ -359,10 +394,7 @@
           sendmoney.ptone) /
         10;
     } else {
-      nomoney = "돈이 부족합니다!";
-      setTimeout(function () {
-        nomoney = "";
-      }, 700);
+      nomoney("돈이 부족합니다!");
     }
   }
 
@@ -418,6 +450,21 @@
     const found = tiles.find((country) => country.num === a);
     return found ? found.price1 : null;
   }
+  function findhowmuchtax(a) {
+    let taxx;
+    if (typeof a === "number") {
+      const found = tiles.find((country) => country.num === a);
+      taxx =
+        found.pass +
+        found.pass1 * found.house +
+        found.pass2 * found.building +
+        found.pass3 * found.hotel;
+    } else {
+      taxx = "없음";
+    }
+    return taxx;
+  }
+
   function nomoney(a) {
     noHavemoney = a;
 
@@ -465,6 +512,12 @@
       playermoney[playerId - 1].ptone) /
       10} 만원
   </p>
+  <p>
+    현재 땅의 통행료 : {#if typeof findhowmuchtax(players[playerId]) === "number"}
+      {findhowmuchtax(players[playerId]) / 10}만원
+    {:else}{findhowmuchtax(players[playerId])}
+    {/if}
+  </p>
   {noHavemoney}
   <button on:click={buyGround}>땅 구매</button>
   {#if players[playerId] !== 0}
@@ -472,6 +525,9 @@
       <button on:click={buyhouse}>별장 구매</button>
       <button on:click={buybuilding}>빌딩 구매</button>
       <button on:click={buyhotel}>호텔 구매</button>
+    {/if}
+    {#if findwhose(players[playerId]) !== 0 && findwhose(players[playerId]) !== 5 && findwhose(players[playerId]) !== 6}
+      <button on:click={paytax}>통행료 납부</button>
     {/if}
   {/if}
 {/if}

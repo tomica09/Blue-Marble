@@ -7,11 +7,14 @@
   import GameController from "./GameController.svelte";
   export let players;
   let socket;
-  export let playerId;
   import { onMount } from "svelte";
   export let tiles;
   export let b;
-  export let turn;
+  export let ahotel;
+  export let abuilding;
+  export let ahouse;
+  export let tilenum;
+
   rows = 11;
   cols = 11;
 
@@ -69,9 +72,9 @@
                 {/if}
               </div>
             </div>
-            <Tile {tile} {a} />
+            <Tile {tile} {a} {ahotel} {abuilding} {ahouse} {tilenum} />
           {:else}
-            <Tile {tile} {a} />
+            <Tile {tile} {a} {ahotel} {abuilding} {ahouse} {tilenum} />
           {/if}
         {/if}
       </div>

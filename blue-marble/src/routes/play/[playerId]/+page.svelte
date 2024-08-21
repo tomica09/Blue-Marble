@@ -12,13 +12,26 @@
   let currentPlayer = null;
   let players = {}; // 플레이어의 위치를 저장합니다.
   let connectionMessage = "";
+  let ahotel = 0;
+  let abuilding = 0;
+  let ahouse = 0;
+  let tilenum = 0;
   // URL 파라미터에서 playerId 가져오기
   let playerId;
   $: playerId = $page.data.playerId;
   let gb = "";
   let data = "";
-  let passmoney = 0;
-  //0: 통행료 지불 안 함 1: 통행료 지불 함
+  let passmoney = [0, 0, 0, 0];
+  let notYourTurn = "";
+  let toplayer;
+  let fifty = 0;
+  let ten = 0;
+  let five = 0;
+  let two = 0;
+  let one = 0;
+  let ptfive = 0;
+  let ptone = 0;
+
   onMount(() => {
     socket = new WebSocket("ws://localhost:8080");
 
@@ -51,7 +64,18 @@
         found.hotel = found.hotel + data.hotel;
         found.building = found.building + data.building;
         found.house = found.house + data.house;
+        tilenum = data.where;
+        ahotel = found.hotel;
+        abuilding = found.building;
+        ahouse = found.house;
+
         console.log(tiles);
+      } else if (data.type === "tax") {
+        passmoney[data.playerId - 1] = data.passmoney;
+        notYourTurn = "통행료 지불 완료";
+        setTimeout(function () {
+          notYourTurn = "";
+        }, 500);
       }
     });
 
@@ -59,24 +83,40 @@
       connectionMessage = "Connection closed.";
     });
   });
-
+  function findwhose(a) {
+    const found = tiles.find((country) => country.num === a);
+    return found ? found.whose : null;
+  }
   function rollDice() {
-    dice1 = Math.floor(Math.random() * 6) + 1;
-    dice2 = Math.floor(Math.random() * 6) + 1;
-    const dice = dice1 + dice2;
-    double = dice1 === dice2 ? "더블!" : "";
+    if (
+      passmoney[playerId - 1] === 1 ||
+      findwhose(players[playerId]) === 0 ||
+      findwhose(players[playerId]) === 5 ||
+      findwhose(players[playerId]) === 6 ||
+      findwhose(players[playerId]) === playerId ||
+      findwhose(players[playerId]) === "" ||
+      players[playerId] === undefined
+    ) {
+      //돈을 안 내도 되는 상황
+      dice1 = Math.floor(Math.random() * 6) + 1;
+      dice2 = Math.floor(Math.random() * 6) + 1;
+      const dice = dice1 + dice2;
+      double = dice1 === dice2 ? "더블!" : "";
 
-    socket.send(
-      JSON.stringify({
-        type: "move",
-        playerId,
-        position: ((players[playerId] ? players[playerId] : 0) + dice) % 40, // 현재 위치 업데이트 로직 필요
-        dice1,
-        dice2,
-        double,
-        turn,
-      })
-    );
+      socket.send(
+        JSON.stringify({
+          type: "move",
+          playerId,
+          position: ((players[playerId] ? players[playerId] : 0) + dice) % 40, // 현재 위치 업데이트 로직 필요
+          dice1,
+          dice2,
+          double,
+          turn,
+        })
+      );
+    } else {
+      return;
+    }
   }
   /**
    * rolldice 함수를 호출 받았을 때 지금 서 있는 땅이 통행료를 지불 받았는지 확인
@@ -84,60 +124,46 @@
    * 진행 후 통행료 지불 여부 0으로 변경
    * 게임컨트롤러파일에서 send값이랑 연동하여 지불 (passmoney1로 변경 후 서버로 전송)
    */
-  let notYourTurn = "";
+
   function whosturn() {
+    console.log(tiles);
     notYourTurn = "";
     console.log(turn);
     console.log(playerId);
 
-    if (turn === 0 && playerId === "1") {
+    if (
+      (turn === 0 && playerId === "1") ||
+      (turn === 1 && playerId === "2") ||
+      (turn === 2 && playerId === "3") ||
+      (turn === 3 && playerId === "4")
+    ) {
       rollDice();
       console.log(double);
-      if (double !== "더블!") {
-        turn = (turn + 1) % 4;
-        socket.send(
-          JSON.stringify({
-            type: "turn",
-            turn,
-          })
-        );
+      if (
+        passmoney[playerId - 1] === 1 ||
+        findwhose(players[playerId]) === 0 ||
+        findwhose(players[playerId]) === 5 ||
+        findwhose(players[playerId]) === 6 ||
+        findwhose(players[playerId]) === playerId ||
+        findwhose(players[playerId]) === "" ||
+        players[playerId] === undefined
+      ) {
+        if (double !== "더블!") {
+          turn = (turn + 1) % 4;
+          socket.send(
+            JSON.stringify({
+              type: "turn",
+              turn,
+            })
+          );
+        }
+      } else {
+        notYourTurn = "통행료를 지불하여 주십시오";
+        setTimeout(function () {
+          notYourTurn = "";
+        }, 700);
       }
-    } else if (turn === 1 && playerId === "2") {
-      rollDice();
-      console.log(double);
-      if (double !== "더블!") {
-        turn = (turn + 1) % 4;
-        socket.send(
-          JSON.stringify({
-            type: "turn",
-            turn,
-          })
-        );
-      }
-    } else if (turn === 2 && playerId === "3") {
-      rollDice();
-      console.log(double);
-      if (double !== "더블!") {
-        turn = (turn + 1) % 4;
-        socket.send(
-          JSON.stringify({
-            type: "turn",
-            turn,
-          })
-        );
-      }
-    } else if (turn === 3 && playerId === "4") {
-      rollDice();
-      console.log(double);
-      if (double !== "더블!") {
-        turn = (turn + 1) % 4;
-        socket.send(
-          JSON.stringify({
-            type: "turn",
-            turn,
-          })
-        );
-      }
+      passmoney[playerId - 1] = 0;
     } else {
       notYourTurn = "당신의 차례가 아닙니다";
       setTimeout(function () {
@@ -162,17 +188,17 @@
     <div class="double">
       <p>{double}</p>
     </div>
-    <h3>{notYourTurn}</h3>
-  </div>
+    <h5>{notYourTurn}</h5>
 
-  <div class="connection-message">
-    <p>{connectionMessage}</p>
-    게임말이 출발지점에 있을 경우<br />표시가 되지 않을 수 있습니다.
+    <div class="connection-message">
+      <p>{connectionMessage}</p>
+      게임말이 출발지점에 있을 경우<br />표시가 되지 않을 수 있습니다.
+    </div>
   </div>
-  <GameBoard {players} {playerId} {tiles} {b} {turn} />
+  <GameBoard {players} {tiles} {b} {tilenum} {ahotel} {abuilding} {ahouse} />
   <div class="gamecontroller">
     {#if playerId}
-      <GameController {playerId} {players} {tiles} {turn} {passmoney} />
+      <GameController {playerId} {players} {tiles} {turn} />
     {/if}
   </div>
 </div>
@@ -192,8 +218,9 @@
     gap: 30px;
   }
   .dice-container {
-    width: 2cm;
+    width: 5cm;
     margin-top: 1cm;
+    font-size: smaller;
   }
   .double {
     margin-top: 10px;
