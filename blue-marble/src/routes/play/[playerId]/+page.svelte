@@ -24,14 +24,37 @@
   let passmoney = [0, 0, 0, 0];
   let notYourTurn = "";
   let toplayer;
-  let fifty = 0;
-  let ten = 0;
-  let five = 0;
-  let two = 0;
-  let one = 0;
-  let ptfive = 0;
-  let ptone = 0;
+  let onefifty = 3;
+  let oneten = 10;
+  let onefive = 10;
+  let onetwo = 5;
+  let oneone = 5;
+  let oneptfive = 5;
+  let oneptone = 5;
 
+  let twofifty = 3;
+  let twoten = 10;
+  let twofive = 10;
+  let twotwo = 5;
+  let twoone = 5;
+  let twoptfive = 5;
+  let twoptone = 5;
+
+  let threefifty = 3;
+  let threeten = 10;
+  let threefive = 10;
+  let threetwo = 5;
+  let threeone = 5;
+  let threeptfive = 5;
+  let threeptone = 5;
+
+  let fourfifty = 3;
+  let fourten = 10;
+  let fourfive = 10;
+  let fourtwo = 5;
+  let fourone = 5;
+  let fourptfive = 5;
+  let fourptone = 5;
   onMount(() => {
     socket = new WebSocket("ws://localhost:8080");
 
@@ -72,10 +95,67 @@
         console.log(tiles);
       } else if (data.type === "tax") {
         passmoney[data.playerId - 1] = data.passmoney;
+        onefifty = data.onefifty;
+        oneten = data.oneten;
+        onefive = data.onefive;
+        onetwo = data.onetwo;
+        oneone = data.oneone;
+        oneptfive = data.oneptfive;
+        oneptone = data.oneptone;
+        twofifty = data.twofifty;
+        twoten = data.twoten;
+        twofive = data.twofive;
+        twotwo = data.twotwo;
+        twoone = data.twoone;
+        twoptfive = data.twoptfive;
+        twoptone = data.twoptone;
+        threefifty = data.threefifty;
+        threeten = data.threeten;
+        threefive = data.threefive;
+        threetwo = data.threetwo;
+        threeone = data.threeone;
+        threeptfive = data.threeptfive;
+        threeptone = data.threeptone;
+        fourfifty = data.fourfifty;
+        fourten = data.fourten;
+        fourfive = data.fourfive;
+        fourtwo = data.fourtwo;
+        fourone = data.fourone;
+        fourptfive = data.fourptfive;
+        fourptone = data.fourptone;
         notYourTurn = "통행료 지불 완료";
         setTimeout(function () {
           notYourTurn = "";
         }, 500);
+      } else if (data.type === "pay") {
+        onefifty = data.onefifty;
+        oneten = data.oneten;
+        onefive = data.onefive;
+        onetwo = data.onetwo;
+        oneone = data.oneone;
+        oneptfive = data.oneptfive;
+        oneptone = data.oneptone;
+        twofifty = data.twofifty;
+        twoten = data.twoten;
+        twofive = data.twofive;
+        twotwo = data.twotwo;
+        twoone = data.twoone;
+        twoptfive = data.twoptfive;
+        twoptone = data.twoptone;
+        threefifty = data.threefifty;
+        threeten = data.threeten;
+        threefive = data.threefive;
+        threetwo = data.threetwo;
+        threeone = data.threeone;
+        threeptfive = data.threeptfive;
+        threeptone = data.threeptone;
+        fourfifty = data.fourfifty;
+        fourten = data.fourten;
+        fourfive = data.fourfive;
+        fourtwo = data.fourtwo;
+        fourone = data.fourone;
+        fourptfive = data.fourptfive;
+        fourptone = data.fourptone;
       }
     });
 
@@ -198,7 +278,40 @@
   <GameBoard {players} {tiles} {b} {tilenum} {ahotel} {abuilding} {ahouse} />
   <div class="gamecontroller">
     {#if playerId}
-      <GameController {playerId} {players} {tiles} {turn} />
+      <GameController
+        {playerId}
+        {players}
+        {tiles}
+        {turn}
+        {onefifty}
+        {oneten}
+        {onefive}
+        {onetwo}
+        {oneone}
+        {oneptfive}
+        {oneptone}
+        {twofifty}
+        {twoten}
+        {twofive}
+        {twotwo}
+        {twoone}
+        {twoptfive}
+        {twoptone}
+        {threefifty}
+        {threeten}
+        {threefive}
+        {threetwo}
+        {threeone}
+        {threeptfive}
+        {threeptone}
+        {fourfifty}
+        {fourten}
+        {fourfive}
+        {fourtwo}
+        {fourone}
+        {fourptfive}
+        {fourptone}
+      />
     {/if}
   </div>
 </div>

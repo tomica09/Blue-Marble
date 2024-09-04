@@ -49,9 +49,13 @@
   ];
 
   setInterval(function () {
-    structure[tilenum].hotel = ahotel;
-    structure[tilenum].building = abuilding;
-    structure[tilenum].house = ahouse;
+    if (tilenum >= 0 && tilenum < structure.length) {
+      // Add this check
+      structure[tilenum].hotel = ahotel;
+      structure[tilenum].building = abuilding;
+      structure[tilenum].house = ahouse;
+    } else {
+    }
   }, 700);
   let howMuch = tile.price / 10;
   if (isNaN(howMuch)) {
@@ -101,13 +105,13 @@
 </div>
 {#if tile}
   {#if tile.hotel}
-    {"🏨".repeat(structure[tile.num].hotel)}
+    {"🏨".repeat(structure[tilenum].hotel)}
   {/if}
   {#if tile.building}
-    {"🏢".repeat(structure[tile.num].building)}
+    {"🏢".repeat(structure[tilenum].building)}
   {/if}
   {#if tile.house}
-    {"🏠".repeat(structure[tile.num].house)}
+    {"🏠".repeat(structure[tilenum].house)}
   {/if}
 {/if}
 
